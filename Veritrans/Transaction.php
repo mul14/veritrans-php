@@ -1,28 +1,48 @@
-<?php
+<?php namespace Veritrans;
 
-class Veritrans_Transaction {
+use Veritrans\Config;
+use Veritrans\ApiRequestor;
 
-  public static function status($id)
-  {
-    return Veritrans_ApiRequestor::get(
-        Veritrans_Config::getBaseUrl() . '/' . $id . '/status',
-        Veritrans_Config::$serverKey,
-        false);
-  }
+/**
+ * Class Transaction
+ *
+ * @package Veritrans
+ */
+class Transaction
+{
+    /**
+     * @param $id
+     *
+     * @return mixed
+     */
+    public static function status($id)
+    {
+        $url = Config::getBaseUrl() . '/' . $id . '/status';
 
-  public static function approve($id)
-  {
-    return Veritrans_ApiRequestor::post(
-        Veritrans_Config::getBaseUrl() . '/' . $id . '/approve',
-        Veritrans_Config::$serverKey,
-        false)->status_code;
-  }
+        return ApiRequestor::get($url, Config::$serverKey, false);
+    }
 
-  public static function cancel($id)
-  {
-    return Veritrans_ApiRequestor::post(
-        Veritrans_Config::getBaseUrl() . '/' . $id . '/cancel',
-        Veritrans_Config::$serverKey,
-        false)->status_code;
-  }
+    /**
+     * @param $id
+     *
+     * @return mixed
+     */
+    public static function approve($id)
+    {
+        $url = Config::getBaseUrl() . '/' . $id . '/approve';
+
+        return ApiRequestor::post($url, Config::$serverKey, false)->status_code;
+    }
+
+    /**
+     * @param $id
+     *
+     * @return mixed
+     */
+    public static function cancel($id)
+    {
+        $url = Config::getBaseUrl() . '/' . $id . '/cancel';
+
+        return ApiRequestor::post($url, Config::$serverKey, false)->status_code;
+    }
 }

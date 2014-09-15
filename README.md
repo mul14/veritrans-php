@@ -1,3 +1,6 @@
+> This is not original package develop by Veritrans Indonesia.<br>
+> This package was optimized using PSR-4.
+
 Veritrans-PHP
 ===============
 
@@ -21,6 +24,8 @@ If you are using [Composer](https://getcomposer.org), add this require line to y
 
 and run `composer install` on your terminal.
 
+Or, you can just run `composer require veritrans/veritrans-php master`.
+
 ### Manual Instalation
 
 If you are not using Composer, you can clone or [download](https://github.com/veritrans/veritrans-php/archive/master.zip) this repository.
@@ -32,7 +37,7 @@ If you are not using Composer, you can clone or [download](https://github.com/ve
 #### Set Server Key
 
 ```php
-Veritrans_Config::$serverKey = '<your server key>';
+Veritrans\Config::$serverKey = '<your server key>';
 ```
 
 #### Set Client Key (VT-Direct)
@@ -44,19 +49,19 @@ Veritrans.client_key = "<your client key>";
 #### Set Environment
 ```php
 // Development Environment (the default)
-Veritrans_Config::$isProduction = false;
+Veritrans\Config::$isProduction = false;
 
 // Production Environment
-Veritrans_Config::$isProduction = true;
+Veritrans\Config::$isProduction = true;
 ```
 
 #### Set Sanitization
 ```php
 // Set sanitization off (default)
-Veritrans_Config::$isSanitized = false;
+Veritrans\Config::$isSanitized = false;
 
 // Set sanitization on
-Veritrans_Config::$isSanitized = true;
+Veritrans\Config::$isSanitized = true;
 ```
 
 ### VT-Web
@@ -76,7 +81,7 @@ $params = array(
 
 try {
   // Redirect to Veritrans VTWeb page
-  header('Location: ' . Veritrans_Vtweb::getRedirectionUrl($params));
+  header('Location: ' . Veritrans\Vtweb::getRedirectionUrl($params));
 }
 catch (Exception $e) {
   echo $e->getMessage();
@@ -86,7 +91,7 @@ catch (Exception $e) {
 #### Handle Notification Callback
 
 ```php
-$notif = new Veritrans_Notification();
+$notif = new Veritrans\Notification();
 
 $transaction = $notif->transaction_status;
 $fraud = $notif->fraud_status;
@@ -323,7 +328,7 @@ $transaction_data = array(
 ##### 5. Charge
 
 ```php
-$response = Veritrans_VtDirect::charge($transaction_data);
+$response = Veritrans\VtDirect::charge($transaction_data);
 ```
 
 ##### 6. Handle Transaction Status
@@ -379,21 +384,21 @@ else {
 ##### Get a Transaction Status
 
 ```php
-$status = Veritrans_Transaction::status($orderId);
+$status = Veritrans\Transaction::status($orderId);
 var_dump($status);
 ```
 
 ##### Approve a Transaction
 
 ```php
-$approve = Veritrans_Transaction::approve($orderId);
+$approve = Veritrans\Transaction::approve($orderId);
 var_dump($approve);
 ```
 
 ##### Cancel a Transaction
 
 ```php
-$cancel = Veritrans_Transaction::cancel($orderId);
+$cancel = Veritrans\Transaction::cancel($orderId);
 var_dump($cancel);
 ```
 
