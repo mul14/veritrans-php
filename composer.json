@@ -1,8 +1,10 @@
 {
-    "name": "veritrans/veritrans-php",
-    "description": "PHP Wraper for Veritrans VT-Web Payment API.",
-    "homepage": "https://veritrans.co.id",
+    "name": "mul14/veritrans",
     "type": "library",
+    "description": "PHP Wraper for Veritrans VT-Web Payment API.",
+    "keywords": ["veritrans", "payment"],
+    "homepage": "https://veritrans.co.id",
+    "license": "",
     "authors": [
         {
             "name": "Andri Setiawan",
@@ -18,7 +20,8 @@
         },
         {
             "name": "Mulia Arifandi Nasution",
-            "email": "mul14.net@gmail.com"
+            "email": "mul14.net@gmail.com",
+            "homepage": "http://mul14.net"
         }
     ],
     "require": {
@@ -30,7 +33,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Veritrans\\": ""
+            "Veritrans\\": "src/"
         }
     }
 }
