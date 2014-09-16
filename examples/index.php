@@ -1,8 +1,8 @@
 <?php
 
-require_once(__DIR__ . '/../Veritrans.php');
+require __DIR__.'/../Veritrans.php';
 
-Veritrans\Config::$serverKey = '<your server key>';
+Veritrans\Config::$serverKey = '705882c8-f8f1-45fa-a23e-652ee4fcf40f';
 
 $notif = new Veritrans\Notification();
 
@@ -31,5 +31,3 @@ else if ($transaction == 'cancel') {
 else if ($transaction == 'deny') {
     // TODO Set payment status in merchant's database to 'failure'
 }
-
-?>
