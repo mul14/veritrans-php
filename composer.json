@@ -35,5 +35,6 @@
         "psr-4": {
             "Veritrans\\": "src/Veritrans/"
         }
-    }
+    },
+    "minimum-stability": "dev"
 }
