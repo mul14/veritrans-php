@@ -3,42 +3,48 @@
 namespace Veritrans;
 
 /**
- * Class Transaction.
+ * API methods to get transaction status, approvea and cancel transactions
  */
 class Transaction
 {
     /**
-     * @param $id
+     * Retrieve transaction status
      *
-     * @return mixed
+     * @param string $id Order ID or transaction ID
+     *
+     * @return mixed[]
      */
     public static function status($id)
     {
-        $url = Config::getBaseUrl().'/'.$id.'/status';
+        $url = Config::getBaseUrl() . "/$id/status";
 
         return ApiRequestor::get($url, Config::$serverKey, false);
     }
 
     /**
-     * @param $id
+     * Appove challenge transaction
      *
-     * @return mixed
+     * @param string $id Order ID or transaction ID
+     *
+     * @return string
      */
     public static function approve($id)
     {
-        $url = Config::getBaseUrl().'/'.$id.'/approve';
+        $url = Config::getBaseUrl() . "/$id/approve";
 
         return ApiRequestor::post($url, Config::$serverKey, false)->status_code;
     }
 
     /**
-     * @param $id
+     * Cancel transaction before it's settled
      *
-     * @return mixed
+     * @param string $id Order ID or transaction ID
+     *
+     * @return string
      */
     public static function cancel($id)
     {
-        $url = Config::getBaseUrl().'/'.$id.'/cancel';
+        $url = Config::getBaseUrl() . "/$id/cancel";
 
         return ApiRequestor::post($url, Config::$serverKey, false)->status_code;
     }

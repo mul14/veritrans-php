@@ -3,14 +3,32 @@
 namespace Veritrans;
 
 /**
- * Class VtWeb.
+ * Create VtWeb transaction and return redirect url
+ *
  */
 class VtWeb
 {
     /**
-     * @param $params
+     * Create VT-Web transaction
      *
-     * @return string
+     * Example:
+     *
+     * ```php
+     *   $params = array(
+     *     'transaction_details' => array(
+     *       'order_id' => rand(),
+     *       'gross_amount' => 10000,
+     *     )
+     *   );
+     *   $paymentUrl = Vtweb::getRedirectionUrl($params);
+     *   header('Location: ' . $paymentUrl);
+     * ```
+     *
+     * @param array $params Payment options
+     *
+     * @return string Redirect URL to VT-Web payment page.
+     *
+     * @throws \Exception curl error or veritrans error
      */
     public static function getRedirectionUrl($params)
     {
@@ -18,11 +36,12 @@ class VtWeb
             'payment_type' => 'vtweb',
             'vtweb' => array(
                 // 'enabled_payments' => array('credit_card'),
-                'credit_card_3d_secure' => Config::$is3ds,
-            ),
+                'credit_card_3d_secure' => Config::$is3ds
+            )
         );
 
         if (array_key_exists('item_details', $params)) {
+
             $gross_amount = 0;
 
             foreach ($params['item_details'] as $item) {
@@ -38,9 +57,10 @@ class VtWeb
             Sanitizer::jsonRequest($payloads);
         }
 
-        $url = Config::getBaseUrl().'/charge';
-
-        $result = ApiRequestor::post($url, Config::$serverKey, $payloads);
+        $result = ApiRequestor::post(
+            Config::getBaseUrl() . '/charge',
+            Config::$serverKey,
+            $payloads);
 
         return $result->redirect_url;
     }

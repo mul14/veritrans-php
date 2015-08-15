@@ -3,19 +3,19 @@
 namespace Veritrans;
 
 /**
- * Class VtDirect.
+ * Provide charge and capture functions for VT-Direct
  */
 class VtDirect
 {
     /**
-     * @param $params
+     * Create VT-Direct transaction.
      *
-     * @return mixed
+     * @param mixed[] $params Transaction options
      */
     public static function charge($params)
     {
         $payloads = array(
-            'payment_type' => 'credit_card',
+            'payment_type' => 'credit_card'
         );
 
         if (array_key_exists('item_details', $params)) {
@@ -34,9 +34,29 @@ class VtDirect
             Sanitizer::jsonRequest($payloads);
         }
 
-        $url = Config::getBaseUrl().'/charge';
+        $result = ApiRequestor::post(
+            Config::getBaseUrl() . '/charge',
+            Config::$serverKey,
+            $payloads);
 
-        $result = ApiRequestor::post($url, Config::$serverKey, $payloads);
+        return $result;
+    }
+
+    /**
+     * Capture pre-authorized transaction
+     *
+     * @param string $param Order ID or transaction ID, that you want to capture
+     */
+    public static function capture($param)
+    {
+        $payloads = array(
+            'transaction_id' => $param,
+        );
+
+        $result = ApiRequestor::post(
+            Config::getBaseUrl() . '/capture',
+            Config::$serverKey,
+            $payloads);
 
         return $result;
     }

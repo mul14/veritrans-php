@@ -5,18 +5,18 @@ namespace Veritrans;
 use Exception;
 
 /**
- * Class ApiRequestor.
+ * Send request to Veritrans API
+ * Better don't use this class directly.
+ * Instead use Veritrans\VtWeb, Veritrans\VtDirect, Veritrans\Transaction
  */
 class ApiRequestor
 {
     /**
-     * @param string $url
-     * @param string $server_key
-     * @param string $data_hash
+     * Send GET request
      *
-     * @return mixed
-     *
-     * @throws Exception
+     * @param string  $url
+     * @param string  $server_key
+     * @param mixed[] $data_hash
      */
     public static function get($url, $server_key, $data_hash)
     {
@@ -24,6 +24,8 @@ class ApiRequestor
     }
 
     /**
+     * Send POST request
+     *
      * @param string $url
      * @param string $server_key
      * @param string $data_hash
@@ -38,6 +40,8 @@ class ApiRequestor
     }
 
     /**
+     * Actually send request to API server
+     *
      * @param string $url
      * @param string $server_key
      * @param string $data_hash
@@ -51,43 +55,76 @@ class ApiRequestor
     {
         $ch = curl_init();
 
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-            'Content-Type: application/json',
-            'Accept: application/json',
-            'Authorization: Basic '.base64_encode($server_key.':'),
-        ));
+        $curl_options = array(
+            CURLOPT_URL => $url,
+            CURLOPT_HTTPHEADER => array(
+                'Content-Type: application/json',
+                'Accept: application/json',
+                'Authorization: Basic ' . base64_encode($server_key . ':')
+            ),
+            CURLOPT_RETURNTRANSFER => 1,
+            CURLOPT_CAINFO => dirname(__FILE__) . "/../data/cacert.pem"
+        );
+
+        // Merging with Veritrans\Config::$curlOptions
+        if (count(Config::$curlOptions)) {
+            // We need to combine headers manually, because it's array and it will no be merged
+            if (Config::$curlOptions[CURLOPT_HTTPHEADER]) {
+                $mergedHeders = array_merge($curl_options[CURLOPT_HTTPHEADER], Config::$curlOptions[CURLOPT_HTTPHEADER]);
+                $headerOptions = array(CURLOPT_HTTPHEADER => $mergedHeders);
+            } else {
+                $mergedHeders = array();
+            }
+
+            $curl_options = array_replace_recursive($curl_options, Config::$curlOptions, $headerOptions);
+        }
 
         if ($post) {
-            curl_setopt($ch, CURLOPT_POST, 1);
+            $curl_options[CURLOPT_POST] = 1;
 
             if ($data_hash) {
                 $body = json_encode($data_hash);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
+                $curl_options[CURLOPT_POSTFIELDS] = $body;
             } else {
-                curl_setopt($ch, CURLOPT_POSTFIELDS, '');
+                $curl_options[CURLOPT_POSTFIELDS] = '';
             }
         }
 
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_CAINFO, __DIR__.'/../data/cacert.pem');
+        curl_setopt_array($ch, $curl_options);
 
-        $result = curl_exec($ch);
-        // curl_close($ch);
+        // For testing purpose
+        if (class_exists('VT_Tests') && VT_Tests::$stubHttp) {
+            $result = self::processStubed($curl_options, $url, $server_key, $data_hash, $post);
+        } else {
+            $result = curl_exec($ch);
+            // curl_close($ch);
+        }
 
-        if ($result === false) {
-            throw new Exception('CURL Error: '.curl_error($ch), curl_errno($ch));
+
+        if ($result === FALSE) {
+            throw new Exception('CURL Error: ' . curl_error($ch), curl_errno($ch));
         } else {
             $result_array = json_decode($result);
-
-            if (!in_array($result_array->status_code, array(200, 201, 202))) {
-                $message = 'Veritrans Error ('.$result_array->status_code.'): '
-                    .$result_array->status_message;
-
+            if (!in_array($result_array->status_code, array(200, 201, 202, 407))) {
+                $message = 'Veritrans Error (' . $result_array->status_code . '): '
+                    . $result_array->status_message;
                 throw new Exception($message, $result_array->status_code);
             } else {
                 return $result_array;
             }
         }
+    }
+
+    private static function processStubed($curl, $url, $server_key, $data_hash, $post)
+    {
+        VT_Tests::$lastHttpRequest = array(
+            "url" => $url,
+            "server_key" => $server_key,
+            "data_hash" => $data_hash,
+            "post" => $post,
+            "curl" => $curl
+        );
+
+        return VT_Tests::$stubHttpResponse;
     }
 }
