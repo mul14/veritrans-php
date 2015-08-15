@@ -1,4 +1,6 @@
-<?php namespace Veritrans;
+<?php
+
+namespace Veritrans;
 
 class Notification
 {

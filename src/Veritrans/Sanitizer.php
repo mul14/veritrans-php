@@ -1,9 +1,9 @@
-<?php namespace Veritrans;
+<?php
+
+namespace Veritrans;
 
 /**
- * Class Sanitizer
- *
- * @package Veritrans
+ * Class Sanitizer.
  */
 class Sanitizer
 {
@@ -24,9 +24,8 @@ class Sanitizer
     {
         $keys = array('item_details', 'customer_details');
 
-        foreach ($keys as $key)
-        {
-            if (! array_key_exists($key, $json)) {
+        foreach ($keys as $key) {
+            if (!array_key_exists($key, $json)) {
                 continue;
             }
 
@@ -41,15 +40,14 @@ class Sanitizer
      */
     private static function fieldItemDetails(&$items)
     {
-        foreach ($items as &$item)
-        {
-            $id = new self;
+        foreach ($items as &$item) {
+            $id = new self();
 
             $item['id'] = $id
                 ->maxLength(50)
                 ->apply($item['id']);
 
-            $name = new self;
+            $name = new self();
 
             $item['name'] = $name
                 ->maxLength(50)
@@ -62,20 +60,19 @@ class Sanitizer
      */
     private static function fieldCustomerDetails(&$field)
     {
-        $first_name = new self;
+        $first_name = new self();
 
         $field['first_name'] = $first_name
             ->maxLength(20)
             ->apply($field['first_name']);
 
-        if (array_key_exists('last_name', $field))
-        {
-            $last_name = new self;
+        if (array_key_exists('last_name', $field)) {
+            $last_name = new self();
 
             $field['last_name'] = $last_name->maxLength(20)->apply($field['last_name']);
         }
 
-        $email = new self;
+        $email = new self();
 
         $field['email'] = $email->maxLength(45)->apply($field['email']);
 
@@ -83,9 +80,8 @@ class Sanitizer
 
         $keys = array('billing_address', 'shipping_address');
 
-        foreach ($keys as $key)
-        {
-            if (! array_key_exists($key, $field)) {
+        foreach ($keys as $key) {
+            if (!array_key_exists($key, $field)) {
                 continue;
             }
 
@@ -101,25 +97,23 @@ class Sanitizer
     private static function fieldBillingAddress(&$field)
     {
         $fields = array(
-            'first_name'   => 20,
-            'last_name'    => 20,
-            'address'      => 200,
-            'city'         => 20,
-            'country_code' => 10
+            'first_name' => 20,
+            'last_name' => 20,
+            'address' => 200,
+            'city' => 20,
+            'country_code' => 10,
         );
 
-        foreach ($fields as $key => $value)
-        {
-            if (array_key_exists($key, $field))
-            {
-                $self = new self;
+        foreach ($fields as $key => $value) {
+            if (array_key_exists($key, $field)) {
+                $self = new self();
 
                 $field[$key] = $self->maxLength($value)->apply($field[$key]);
             }
         }
 
         if (array_key_exists('postal_code', $field)) {
-            $postal_code = new self;
+            $postal_code = new self();
 
             $field['postal_code'] = $postal_code
                 ->whitelist('A-Za-z0-9\\- ')
@@ -147,7 +141,7 @@ class Sanitizer
     {
         $plus = substr($field, 0, 1) === '+' ? true : false;
 
-        $self = new self;
+        $self = new self();
 
         $field = $self
             ->whitelist('\\d\\-\\(\\) ')
@@ -155,10 +149,10 @@ class Sanitizer
             ->apply($field);
 
         if ($plus) {
-            $field = '+' . $field;
+            $field = '+'.$field;
         }
 
-        $self = new self;
+        $self = new self();
 
         $field = $self->maxLength(19)->apply($field);
     }

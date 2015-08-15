@@ -1,12 +1,9 @@
-<?php namespace Veritrans;
+<?php
 
-use Veritrans\Config;
-use Veritrans\ApiRequestor;
+namespace Veritrans;
 
 /**
- * Class Transaction
- *
- * @package Veritrans
+ * Class Transaction.
  */
 class Transaction
 {
@@ -17,7 +14,7 @@ class Transaction
      */
     public static function status($id)
     {
-        $url = Config::getBaseUrl() . '/' . $id . '/status';
+        $url = Config::getBaseUrl().'/'.$id.'/status';
 
         return ApiRequestor::get($url, Config::$serverKey, false);
     }
@@ -29,7 +26,7 @@ class Transaction
      */
     public static function approve($id)
     {
-        $url = Config::getBaseUrl() . '/' . $id . '/approve';
+        $url = Config::getBaseUrl().'/'.$id.'/approve';
 
         return ApiRequestor::post($url, Config::$serverKey, false)->status_code;
     }
@@ -41,7 +38,7 @@ class Transaction
      */
     public static function cancel($id)
     {
-        $url = Config::getBaseUrl() . '/' . $id . '/cancel';
+        $url = Config::getBaseUrl().'/'.$id.'/cancel';
 
         return ApiRequestor::post($url, Config::$serverKey, false)->status_code;
     }
